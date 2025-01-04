@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"os"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -11,6 +13,8 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 )
+
+const hostRoot = "/host"
 
 // SystemInfo representa la información del sistema
 type SystemInfo struct {
@@ -38,11 +42,12 @@ type SystemInfo struct {
 	} `json:"disk_info"`
 }
 
+// getSystemInfo recopila la información del sistema desde el anfitrión
 func getSystemInfo() (SystemInfo, error) {
 	var info SystemInfo
 
-	// Información del host
-	hostInfo, err := host.Info()
+	// Usar context.TODO() en lugar de nil
+	hostInfo, err := host.InfoWithContext(context.TODO())
 	if err != nil {
 		return info, err
 	}
@@ -53,7 +58,7 @@ func getSystemInfo() (SystemInfo, error) {
 	info.HostInfo.Uptime = hostInfo.Uptime
 
 	// Información de CPU
-	cpuInfo, err := cpu.Info()
+	cpuInfo, err := cpu.InfoWithContext(context.TODO())
 	if err != nil {
 		return info, err
 	}
@@ -61,7 +66,7 @@ func getSystemInfo() (SystemInfo, error) {
 		info.CPUInfo.ModelName = cpuInfo[0].ModelName
 		info.CPUInfo.Cores = cpuInfo[0].Cores
 	}
-	cpuUsage, err := cpu.Percent(0, false)
+	cpuUsage, err := cpu.PercentWithContext(context.TODO(), 0, false)
 	if err != nil {
 		return info, err
 	}
@@ -70,7 +75,7 @@ func getSystemInfo() (SystemInfo, error) {
 	}
 
 	// Información de memoria
-	memInfo, err := mem.VirtualMemory()
+	memInfo, err := mem.VirtualMemoryWithContext(context.TODO())
 	if err != nil {
 		return info, err
 	}
@@ -79,7 +84,7 @@ func getSystemInfo() (SystemInfo, error) {
 	info.MemoryInfo.Usage = memInfo.UsedPercent
 
 	// Información del disco
-	diskInfo, err := disk.Usage("/")
+	diskInfo, err := disk.Usage(hostRoot + "/")
 	if err != nil {
 		return info, err
 	}
@@ -106,6 +111,15 @@ func main() {
 		log.Fatalf("Error obteniendo información del sistema: %v\n", err)
 	}
 
+	// Formatear JSON para la salida legible
+	jsonData, err := json.MarshalIndent(info, "", "  ")
+	if err != nil {
+		log.Fatalf("Error formateando JSON: %v\n", err)
+	}
+
+	// Imprimir en la consola
+	fmt.Println(string(jsonData))
+
 	// Guardar la información en un archivo JSON
 	filename := "system_info.json"
 	err = saveToJSON(info, filename)
@@ -117,12 +131,28 @@ func main() {
 	// Iniciar el servidor HTTP
 	app := fiber.New()
 
+	// Ruta raíz: redirigir a /system-info
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Redirect("/system-info", 302)
+	})
+
 	// Ruta para obtener información del sistema
 	app.Get("/system-info", func(c *fiber.Ctx) error {
 		return c.JSON(info)
 	})
 
-	// Iniciar el servidor en el puerto 3000
-	log.Println("Servidor corriendo en http://localhost:4000")
-	log.Fatal(app.Listen(":4000"))
+	// Ruta para descargar el archivo JSON
+	app.Get("/download-json", func(c *fiber.Ctx) error {
+		return c.Download(filename)
+	})
+
+	// Detectar puerto dinámicamente
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "4000"
+	}
+
+	// Iniciar el servidor en el puerto dinámico
+	log.Printf("Servidor corriendo en http://localhost:%s", port)
+	log.Fatal(app.Listen(":" + port))
 }

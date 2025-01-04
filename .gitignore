@@ -1,0 +1,11 @@
+# Ignorar binarios y dependencias
+system-info
+*.exe
+*.log
+
+# Archivos generados por Go
+*.out
+
+# Archivos específicos del sistema
+.DS_Store
+Thumbs.db
