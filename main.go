@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -14,7 +13,7 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
-const hostRoot = "/host"
+const hostRoot = "/" // Ruta base local
 
 // SystemInfo representa la información del sistema
 type SystemInfo struct {
@@ -42,11 +41,11 @@ type SystemInfo struct {
 	} `json:"disk_info"`
 }
 
-// getSystemInfo recopila la información del sistema desde el anfitrión
+// getSystemInfo recopila la información del sistema local
 func getSystemInfo() (SystemInfo, error) {
 	var info SystemInfo
 
-	// Usar context.TODO() en lugar de nil
+	// Información del host
 	hostInfo, err := host.InfoWithContext(context.TODO())
 	if err != nil {
 		return info, err
@@ -84,7 +83,7 @@ func getSystemInfo() (SystemInfo, error) {
 	info.MemoryInfo.Usage = memInfo.UsedPercent
 
 	// Información del disco
-	diskInfo, err := disk.Usage(hostRoot + "/")
+	diskInfo, err := disk.Usage(hostRoot)
 	if err != nil {
 		return info, err
 	}
@@ -111,15 +110,6 @@ func main() {
 		log.Fatalf("Error obteniendo información del sistema: %v\n", err)
 	}
 
-	// Formatear JSON para la salida legible
-	jsonData, err := json.MarshalIndent(info, "", "  ")
-	if err != nil {
-		log.Fatalf("Error formateando JSON: %v\n", err)
-	}
-
-	// Imprimir en la consola
-	fmt.Println(string(jsonData))
-
 	// Guardar la información en un archivo JSON
 	filename := "system_info.json"
 	err = saveToJSON(info, filename)
@@ -131,14 +121,13 @@ func main() {
 	// Iniciar el servidor HTTP
 	app := fiber.New()
 
-	// Ruta raíz: redirigir a /system-info
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Redirect("/system-info", 302)
-	})
+	// Servir archivos estáticos
+	app.Static("/css", "./css")
+	app.Static("/js", "./js")
 
-	// Ruta para obtener información del sistema
-	app.Get("/system-info", func(c *fiber.Ctx) error {
-		return c.JSON(info)
+	// Servir el archivo index.html desde la raíz
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendFile("./index.html")
 	})
 
 	// Ruta para descargar el archivo JSON
@@ -152,7 +141,7 @@ func main() {
 		port = "4000"
 	}
 
-	// Iniciar el servidor en el puerto dinámico
+	// Iniciar el servidor
 	log.Printf("Servidor corriendo en http://localhost:%s", port)
 	log.Fatal(app.Listen(":" + port))
 }
