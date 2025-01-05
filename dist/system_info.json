@@ -4,21 +4,21 @@
     "platform": "Microsoft Windows 10 Education N",
     "version": "10.0.19045.5247 Build 19045.5247",
     "hostname": "DESKTOP-8SRT9AC",
-    "uptime": 158259
+    "uptime": 159404
   },
   "cpu_info": {
     "model_name": "Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz",
     "cores": 8,
-    "usage": 37.5
+    "usage": 0
   },
   "memory_info": {
     "total_gb": 15.953083038330078,
-    "used_gb": 7.905231475830078,
-    "usage_percent": 49
+    "used_gb": 8.183452606201172,
+    "usage_percent": 51
   },
   "disk_info": {
     "total_gb": 930.9301795959473,
-    "used_gb": 190.99614334106445,
-    "usage_percent": 20.516699052979757
+    "used_gb": 190.9855194091797,
+    "usage_percent": 20.515557836149792
   }
 }

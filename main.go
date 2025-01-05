@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -12,8 +12,6 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 )
-
-const hostRoot = "/" // Ruta base local
 
 // SystemInfo representa la información del sistema
 type SystemInfo struct {
@@ -41,12 +39,12 @@ type SystemInfo struct {
 	} `json:"disk_info"`
 }
 
-// getSystemInfo recopila la información del sistema local
+// getSystemInfo genera información del sistema para cada solicitud
 func getSystemInfo() (SystemInfo, error) {
 	var info SystemInfo
 
 	// Información del host
-	hostInfo, err := host.InfoWithContext(context.TODO())
+	hostInfo, err := host.Info()
 	if err != nil {
 		return info, err
 	}
@@ -57,7 +55,7 @@ func getSystemInfo() (SystemInfo, error) {
 	info.HostInfo.Uptime = hostInfo.Uptime
 
 	// Información de CPU
-	cpuInfo, err := cpu.InfoWithContext(context.TODO())
+	cpuInfo, err := cpu.Info()
 	if err != nil {
 		return info, err
 	}
@@ -65,16 +63,9 @@ func getSystemInfo() (SystemInfo, error) {
 		info.CPUInfo.ModelName = cpuInfo[0].ModelName
 		info.CPUInfo.Cores = cpuInfo[0].Cores
 	}
-	cpuUsage, err := cpu.PercentWithContext(context.TODO(), 0, false)
-	if err != nil {
-		return info, err
-	}
-	if len(cpuUsage) > 0 {
-		info.CPUInfo.Usage = cpuUsage[0]
-	}
 
 	// Información de memoria
-	memInfo, err := mem.VirtualMemoryWithContext(context.TODO())
+	memInfo, err := mem.VirtualMemory()
 	if err != nil {
 		return info, err
 	}
@@ -83,7 +74,7 @@ func getSystemInfo() (SystemInfo, error) {
 	info.MemoryInfo.Usage = memInfo.UsedPercent
 
 	// Información del disco
-	diskInfo, err := disk.Usage(hostRoot)
+	diskInfo, err := disk.Usage("/")
 	if err != nil {
 		return info, err
 	}
@@ -94,54 +85,45 @@ func getSystemInfo() (SystemInfo, error) {
 	return info, nil
 }
 
-// saveToJSON guarda la información en un archivo JSON
-func saveToJSON(info SystemInfo, filename string) error {
-	jsonData, err := json.MarshalIndent(info, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(filename, jsonData, 0644)
-}
-
 func main() {
-	// Crear la información del sistema
-	info, err := getSystemInfo()
-	if err != nil {
-		log.Fatalf("Error obteniendo información del sistema: %v\n", err)
-	}
-
-	// Guardar la información en un archivo JSON
-	filename := "system_info.json"
-	err = saveToJSON(info, filename)
-	if err != nil {
-		log.Fatalf("Error escribiendo JSON en archivo: %v\n", err)
-	}
-	log.Printf("Información del sistema guardada en '%s'\n", filename)
-
 	// Iniciar el servidor HTTP
 	app := fiber.New()
 
-	// Servir archivos estáticos
-	app.Static("/css", "./css")
-	app.Static("/js", "./js")
+	// Ruta para generar y descargar el archivo JSON
+	app.Get("/generate-json", func(c *fiber.Ctx) error {
+		// Generar la información del sistema
+		info, err := getSystemInfo()
+		if err != nil {
+			return c.Status(500).SendString("Error obteniendo información del sistema")
+		}
 
-	// Servir el archivo index.html desde la raíz
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendFile("./index.html")
+		// Crear el archivo JSON temporalmente
+		outputPath := filepath.Join(os.TempDir(), "system_info.json")
+		file, err := os.Create(outputPath)
+		if err != nil {
+			return c.Status(500).SendString("Error creando archivo JSON")
+		}
+		defer file.Close()
+
+		encoder := json.NewEncoder(file)
+		encoder.SetIndent("", "  ")
+		if err := encoder.Encode(info); err != nil {
+			return c.Status(500).SendString("Error escribiendo información en archivo JSON")
+		}
+
+		// Descargar el archivo JSON
+		return c.Download(outputPath, "system_info.json")
 	})
 
-	// Ruta para descargar el archivo JSON
-	app.Get("/download-json", func(c *fiber.Ctx) error {
-		return c.Download(filename)
-	})
+	// Servir página estática
+	app.Static("/", "./dist")
 
-	// Detectar puerto dinámicamente
+	// Puerto dinámico para producción
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "4000"
 	}
 
-	// Iniciar el servidor
 	log.Printf("Servidor corriendo en http://localhost:%s", port)
 	log.Fatal(app.Listen(":" + port))
 }
