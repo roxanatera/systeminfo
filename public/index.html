@@ -7,35 +7,53 @@
 </head>
 <body>
     <h1>Información del Sistema del Cliente</h1>
-    <div id="info"></div>
+    <div id="infoCliente"></div>
+    <a href="/systeminfo">Ver la información del sistema del servidor</a>
     <script>
-        function detectarSistemaOperativo() {
-            const platform = window.navigator.platform;
-            const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
-            const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
-            const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+        function detectarNavegador() {
+            const ua = navigator.userAgent;
 
-            if (macosPlatforms.indexOf(platform) !== -1) {
-                return 'Mac OS';
-            } else if (iosPlatforms.indexOf(platform) !== -1) {
-                return 'iOS';
-            } else if (windowsPlatforms.indexOf(platform) !== -1) {
-                return 'Windows';
-            } else if (/Android/.test(navigator.userAgent)) {
-                return 'Android';
-            } else if (!os && /Linux/.test(platform)) {
-                return 'Linux';
+            if (ua.includes("Edg")) {
+                return "Microsoft Edge";
+            } else if (ua.includes("Chrome") && !ua.includes("Edg") && !ua.includes("OPR")) {
+                return "Google Chrome";
+            } else if (ua.includes("Safari") && !ua.includes("Chrome")) {
+                return "Safari";
+            } else if (ua.includes("Firefox")) {
+                return "Mozilla Firefox";
+            } else if (ua.includes("Opera") || ua.includes("OPR")) {
+                return "Opera";
             }
+            return "Desconocido";
+        }
 
-            return 'Desconocido';
+        function detectarSistemaOperativo() {
+            const ua = navigator.userAgent;
+
+            if (ua.includes("Windows NT 10.0")) {
+                return "Windows 10/11";
+            } else if (ua.includes("Windows NT 6.3")) {
+                return "Windows 8.1";
+            } else if (ua.includes("Windows NT 6.2")) {
+                return "Windows 8";
+            } else if (ua.includes("Windows NT 6.1")) {
+                return "Windows 7";
+            } else if (ua.includes("Mac OS X")) {
+                return "macOS";
+            } else if (ua.includes("Android")) {
+                return "Android";
+            } else if (ua.includes("iPhone") || ua.includes("iPad")) {
+                return "iOS";
+            } else if (navigator.platform.startsWith("Linux")) {
+                return "Linux";
+            }
+            return "Desconocido";
         }
 
         function mostrarInformacion() {
-            const infoDiv = document.getElementById('info');
-            infoDiv.innerHTML = `
-                <p>Sistema Operativo: ${detectarSistemaOperativo()}</p>
-                <p>Resolución de Pantalla: ${screen.width}x${screen.height}</p>
-                <p>Navegador: ${navigator.userAgent}</p>
+            document.getElementById('infoCliente').innerHTML = `
+                <strong>Sistema Operativo:</strong> ${detectarSistemaOperativo()}<br>
+                <strong>Navegador:</strong> ${detectarNavegador()}
             `;
         }
 

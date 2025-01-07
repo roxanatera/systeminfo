@@ -2,8 +2,8 @@ package main
 
 import (
     "fmt"
-    "net/http"
     "os"
+	"net/http"
     "runtime"
     "github.com/shirou/gopsutil/disk"
     "github.com/shirou/gopsutil/mem"
@@ -51,13 +51,17 @@ func systemInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    http.HandleFunc("/", mainPage)        
-    http.HandleFunc("/systeminfo", systemInfo) // Ruta para la información del sistema
+	fs := http.FileServer(http.Dir("./public"))
+	http.Handle("/", fs)
 
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080" // Puerto por defecto si no se especifica
-    }
-    fmt.Printf("Servidor iniciado en http://localhost:%s\n", port)
-    http.ListenAndServe(":"+port, nil)
+	// Maneja la ruta /systeminfo
+	http.HandleFunc("/systeminfo", systemInfo)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" 
+	}
+	fmt.Printf("Servidor iniciado en http://localhost:%s\n", port)
+	http.ListenAndServe(":"+port, nil)
 }
+
