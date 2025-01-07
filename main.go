@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"log"
 
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
@@ -37,7 +38,15 @@ func systemInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", systemInfo) 
-	fmt.Println("Servidor iniciado en http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("Hello, world!"))
+    })
+
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
+    log.Printf("Servidor iniciado en http://localhost:%s\n", port)
+    log.Fatal(http.ListenAndServe(":"+port, nil))
 }
