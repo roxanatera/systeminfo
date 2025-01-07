@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información del Sistema Cliente</title>
+</head>
+<body>
+    <h1>Información del Sistema del Cliente</h1>
+    <div id="info"></div>
+    <script>
+        function detectarSistemaOperativo() {
+            const platform = window.navigator.platform;
+            const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+            const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+            const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+
+            if (macosPlatforms.indexOf(platform) !== -1) {
+                return 'Mac OS';
+            } else if (iosPlatforms.indexOf(platform) !== -1) {
+                return 'iOS';
+            } else if (windowsPlatforms.indexOf(platform) !== -1) {
+                return 'Windows';
+            } else if (/Android/.test(navigator.userAgent)) {
+                return 'Android';
+            } else if (!os && /Linux/.test(platform)) {
+                return 'Linux';
+            }
+
+            return 'Desconocido';
+        }
+
+        function mostrarInformacion() {
+            const infoDiv = document.getElementById('info');
+            infoDiv.innerHTML = `
+                <p>Sistema Operativo: ${detectarSistemaOperativo()}</p>
+                <p>Resolución de Pantalla: ${screen.width}x${screen.height}</p>
+                <p>Navegador: ${navigator.userAgent}</p>
+            `;
+        }
+
+        mostrarInformacion();
+    </script>
+</body>
+</html>

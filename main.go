@@ -10,13 +10,19 @@ import (
 )
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
-    // Envía una página HTML con un enlace a la información del sistema
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
     fmt.Fprintf(w, `<html><head><title>Página Inicial</title></head><body>
         <h1>Bienvenido a la Página de Información del Sistema</h1>
-        <p><a href="/systeminfo">Ver la información de tu sistema aquí</a></p>
+        <p><a href="/systeminfo">Ver la información del sistema del servidor aquí</a></p>
+        <h2>Información del Sistema del Cliente</h2>
+        <div id="infoCliente"></div>
+        <script>
+        document.getElementById('infoCliente').innerHTML = '<strong>Sistema Operativo:</strong> ' + navigator.platform + 
+        '<br><strong>Navegador:</strong> ' + navigator.userAgent;
+        </script>
         </body></html>`)
 }
+
 
 func systemInfo(w http.ResponseWriter, r *http.Request) {
     // Establece el tipo de contenido y la codificación de caracteres
