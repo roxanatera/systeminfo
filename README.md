@@ -46,3 +46,48 @@ Incluye un enlace en la página principal para acceder a la información del sis
 
 ## Estructura del Proyecto
 
+ ├── main.go # Código principal del servidor ├── public │ └── index.html # Página principal con detección del cliente └── README.md # Documentación del proyecto
+
+
+ 
+## Cómo Ejecutar Localmente
+
+1. **Clona el repositorio**:
+   ```bash
+   git clone https://github.com/roxanatera/systeminfo.git
+   cd tu-repositorio
+
+## 2.
+
+**Ejecuta la aplicación**:
+go run main.go
+
+
+## Abre el navegador:
+
+Visita http://localhost:8080 para ver la información del sistema cliente.
+Haz clic en el enlace para acceder a http://localhost:8080/systeminfo y ver la información del servidor.
+
+
+##
+Información del Sistema del Cliente:
+- Sistema Operativo: Windows 10/11
+- Navegador: Google Chrome
+- Resolución de Pantalla: 1920 x 1080
+- Idioma del Navegador: es-ES
+- Zona Horaria: Europe/Madrid
+- Soporte de Cookies: Habilitadas
+- Información de la Red: Tipo: wifi, Velocidad: 10 Mbps
+- Plataforma del Dispositivo: Win32
+- Soporte de APIs:
+  - WebRTC: Sí
+  - Geolocalización: Sí
+  - WebAssembly: Sí
+- Geolocalización: Latitud: 40.416775, Longitud: -3.703790
+
+
+## Información del Sistema del Servidor:
+- Sistema Operativo: linux
+- Arquitectura: amd64
+- Número de CPUs: 2
+
