@@ -1,72 +1,64 @@
-# System Info App
+# Sistema de Información del Sistema Operativo
 
-System Info App es una aplicación desarrollada en **Go (Golang)** que recopila y muestra información del sistema, como CPU, memoria, disco y más. También incluye una API que expone esta información en formato JSON.
+Este proyecto es una aplicación web en Go que muestra información detallada sobre el sistema operativo en el que se ejecuta. Proporciona datos como el uso de CPU, espacio en disco, memoria RAM y más, todo accesible a través de una interfaz web sencilla.
 
 ## Características
 
-- Obtención de información detallada del sistema:
-  - Sistema operativo, hostname y tiempo de actividad.
-  - Uso de CPU, memoria y disco.
-- Exposición de datos a través de una API HTTP en formato JSON.
-- Generación de una salida HTML estilizada para visualizar los datos.
-- Desplegable en **Docker** para facilitar su uso.
+- Muestra el sistema operativo y la arquitectura.
+- Número de CPUs disponibles.
+- Información sobre el uso del disco duro.
+- Detalles de la memoria RAM utilizada y disponible.
+- Directorio principal del usuario actual.
+- Variables de entorno esenciales.
 
-## Tecnologías utilizadas
+## Tecnologías Utilizadas
 
-- **Backend:** Golang
-- **Framework HTTP:** Fiber
-- **Biblioteca de Sistema:** gopsutil
-- **Contenedores:** Docker
+- **Go (Golang)**: Lenguaje de programación utilizado para desarrollar la aplicación backend.
+- **[gopsutil](https://github.com/shirou/gopsutil)**: Biblioteca en Go utilizada para recopilar información del sistema.
+- **HTML**: Utilizado para la estructuración de la página web que muestra la información.
 
-## Cómo usar
+## Requisitos
 
-### Ejecución local
+Para ejecutar este proyecto necesitas tener instalado Go (Golang). Puedes descargarlo e instalarlo desde [aquí](https://golang.org/dl/).
 
-1. Clona este repositorio:
-   ```bash
-   git clone  https://github.com/roxanatera/systeminfo.git
-git branch -M main
+## Instalación y Ejecución
 
-###go build -o system-info .
-./system-info
-## Para descargar la imagen, ejecuta:
-**docker pull roxanatera/system-info-app:latest**
+Clona el repositorio en tu máquina local usando:
+
+## 
+Claro, te ayudaré a crear un archivo README.md para tu proyecto de GitHub que describa tu aplicación de visualización de información del sistema operativo. Este archivo README proporcionará una visión general del proyecto, detalles sobre cómo se construye y ejecuta, y cómo se puede contribuir al mismo.
+
+Contenido del README.md
+markdown
+Copiar código
+# Sistema de Información del Sistema Operativo
+
+Este proyecto es una aplicación web en Go que muestra información detallada sobre el sistema operativo en el que se ejecuta. Proporciona datos como el uso de CPU, espacio en disco, memoria RAM y más, todo accesible a través de una interfaz web sencilla.
+
+## Características
+
+- Muestra el sistema operativo y la arquitectura.
+- Número de CPUs disponibles.
+- Información sobre el uso del disco duro.
+- Detalles de la memoria RAM utilizada y disponible.
+- Directorio principal del usuario actual.
+- Variables de entorno esenciales.
+
+## Tecnologías Utilizadas
+
+- **Go (Golang)**: Lenguaje de programación utilizado para desarrollar la aplicación backend.
+- **[gopsutil](https://github.com/shirou/gopsutil)**: Biblioteca en Go utilizada para recopilar información del sistema.
+- **HTML**: Utilizado para la estructuración de la página web que muestra la información.
+
+## Requisitos
+
+Para ejecutar este proyecto necesitas tener instalado Go (Golang). Puedes descargarlo e instalarlo desde [aquí](https://golang.org/dl/).
+
+## Instalación y Ejecución
+
+Clona el repositorio en tu máquina local usando:
 
 
-## http://localhost:4000/system-info
-
-## docker build -t system-info-app .
-**Para ejecutar la imagen de Docker y obtener información del sistema anfitrión, usa el siguiente comando:**
-## docker run -d -p 4000:4000 --privileged -v /:/host roxanatera/system-info-app:latest
-
-## http://localhost:4000/system-info
-
-## Ejemplo de Salida JSON
-
-Al consultar el endpoint `/system-info`, se obtiene una respuesta en formato JSON con la siguiente estructura:
-
-```json
-{
-    "host_info": {
-        "os": "linux",
-        "platform": "ubuntu",
-        "version": "20.04",
-        "hostname": "my-host",
-        "uptime": 123456
-    },
-    "cpu_info": {
-        "model_name": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
-        "cores": 6,
-        "usage": 15.7
-    },
-    "memory_info": {
-        "total_gb": 16.0,
-        "used_gb": 8.5,
-        "usage_percent": 53.1
-    },
-    "disk_info": {
-        "total_gb": 512.0,
-        "used_gb": 256.0,
-        "usage_percent": 50.0
-    }
-}
+## Para ejecutar la aplicación, utiliza el siguiente comando en la raíz del proyecto:
+*** go run . ***
+*** La aplicación estará disponible en http://localhost:8080**
