@@ -7,8 +7,7 @@
 </head>
 <body>
     <h1>Información del Sistema del Cliente</h1>
-    <div id="infoCliente"></div>
-    <a href="/systeminfo">Ver la información del sistema del servidor</a>
+    <div id="infoCliente">Cargando información...</div>
     <script>
         function detectarNavegador() {
             const ua = navigator.userAgent;
@@ -50,14 +49,85 @@
             return "Desconocido";
         }
 
-        function mostrarInformacion() {
-            document.getElementById('infoCliente').innerHTML = `
-                <strong>Sistema Operativo:</strong> ${detectarSistemaOperativo()}<br>
-                <strong>Navegador:</strong> ${detectarNavegador()}
-            `;
+        function obtenerResolucionPantalla() {
+            return `${window.screen.width} x ${window.screen.height}`;
         }
 
-        mostrarInformacion();
+        function obtenerIdiomaNavegador() {
+            return navigator.language || navigator.userLanguage;
+        }
+
+        function obtenerZonaHoraria() {
+            return Intl.DateTimeFormat().resolvedOptions().timeZone;
+        }
+
+        function comprobarSoporteCookies() {
+            return navigator.cookieEnabled ? "Habilitadas" : "Deshabilitadas";
+        }
+
+        function obtenerInformacionRed() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                return `Tipo: ${connection.effectiveType}, Velocidad: ${connection.downlink} Mbps`;
+            }
+            return "No disponible";
+        }
+
+        function obtenerPlataformaDispositivo() {
+            return navigator.platform;
+        }
+
+        function verificarAPIs() {
+            return {
+                WebRTC: !!navigator.mediaDevices,
+                Geolocalización: !!navigator.geolocation,
+                WebAssembly: typeof WebAssembly !== "undefined"
+            };
+        }
+
+        function obtenerGeolocalizacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const { latitude, longitude } = position.coords;
+                    document.getElementById('infoCliente').innerHTML += `
+                        <strong>Geolocalización:</strong> Latitud: ${latitude}, Longitud: ${longitude}<br>
+                    `;
+                }, (error) => {
+                    document.getElementById('infoCliente').innerHTML += `
+                        <strong>Geolocalización:</strong> No disponible (permiso denegado)<br>
+                    `;
+                });
+            } else {
+                document.getElementById('infoCliente').innerHTML += `
+                    <strong>Geolocalización:</strong> No soportada por el navegador<br>
+                `;
+            }
+        }
+
+        function mostrarInformacionCliente() {
+            const info = document.getElementById('infoCliente');
+            const apis = verificarAPIs();
+
+            info.innerHTML = `
+                <strong>Sistema Operativo:</strong> ${detectarSistemaOperativo()}<br>
+                <strong>Navegador:</strong> ${detectarNavegador()}<br>
+                <strong>Resolución de Pantalla:</strong> ${obtenerResolucionPantalla()}<br>
+                <strong>Idioma del Navegador:</strong> ${obtenerIdiomaNavegador()}<br>
+                <strong>Zona Horaria:</strong> ${obtenerZonaHoraria()}<br>
+                <strong>Soporte de Cookies:</strong> ${comprobarSoporteCookies()}<br>
+                <strong>Información de la Red:</strong> ${obtenerInformacionRed()}<br>
+                <strong>Plataforma del Dispositivo:</strong> ${obtenerPlataformaDispositivo()}<br>
+                <strong>Soporte de APIs:</strong><br>
+                - WebRTC: ${apis.WebRTC ? "Sí" : "No"}<br>
+                - Geolocalización: ${apis.Geolocalización ? "Sí" : "No"}<br>
+                - WebAssembly: ${apis.WebAssembly ? "Sí" : "No"}<br>
+            `;
+
+            // Geolocalización
+            obtenerGeolocalizacion();
+        }
+
+        mostrarInformacionCliente();
     </script>
 </body>
 </html>

@@ -1,64 +1,48 @@
-# Sistema de Información del Sistema Operativo
+# Información del Sistema Cliente y Servidor
 
-Este proyecto es una aplicación web en Go que muestra información detallada sobre el sistema operativo en el que se ejecuta. Proporciona datos como el uso de CPU, espacio en disco, memoria RAM y más, todo accesible a través de una interfaz web sencilla.
+Este proyecto es una aplicación desarrollada en **Go** que sirve una página web para mostrar información detallada del sistema operativo y navegador del cliente, así como información básica del sistema del servidor. La aplicación está diseñada para ejecutarse localmente o desplegarse en plataformas como **Render**.
 
-## Características
+## Funcionalidades
 
-- Muestra el sistema operativo y la arquitectura.
-- Número de CPUs disponibles.
-- Información sobre el uso del disco duro.
-- Detalles de la memoria RAM utilizada y disponible.
-- Directorio principal del usuario actual.
-- Variables de entorno esenciales.
+### Cliente
+La aplicación recopila y muestra la siguiente información del cliente (navegador):
+- **Sistema Operativo**: Detecta el sistema operativo del cliente.
+- **Navegador**: Identifica el navegador utilizado.
+- **Resolución de Pantalla**: Muestra el ancho y alto de la pantalla del cliente en píxeles.
+- **Idioma del Navegador**: Detecta el idioma configurado en el navegador.
+- **Zona Horaria**: Muestra la zona horaria del cliente.
+- **Soporte de Cookies**: Indica si las cookies están habilitadas.
+- **Información de la Conexión de Red**: Muestra el tipo de conexión y la velocidad si el navegador lo soporta.
+- **Plataforma del Dispositivo**: Muestra información sobre la plataforma del dispositivo.
+- **Soporte de APIs Específicas**:
+  - WebRTC
+  - Geolocalización
+  - WebAssembly
+- **Geolocalización**: Si el cliente lo permite, muestra las coordenadas de ubicación (latitud y longitud).
 
-## Tecnologías Utilizadas
+### Servidor
+La aplicación también incluye un endpoint `/systeminfo` que muestra información básica sobre el servidor:
+- **Sistema Operativo del Servidor**.
+- **Arquitectura del Servidor**.
+- **Número de CPUs**.
 
-- **Go (Golang)**: Lenguaje de programación utilizado para desarrollar la aplicación backend.
-- **[gopsutil](https://github.com/shirou/gopsutil)**: Biblioteca en Go utilizada para recopilar información del sistema.
-- **HTML**: Utilizado para la estructuración de la página web que muestra la información.
-
-## Requisitos
-
-Para ejecutar este proyecto necesitas tener instalado Go (Golang). Puedes descargarlo e instalarlo desde [aquí](https://golang.org/dl/).
-
-## Instalación y Ejecución
-
-Clona el repositorio en tu máquina local usando:
-
-## 
-Claro, te ayudaré a crear un archivo README.md para tu proyecto de GitHub que describa tu aplicación de visualización de información del sistema operativo. Este archivo README proporcionará una visión general del proyecto, detalles sobre cómo se construye y ejecuta, y cómo se puede contribuir al mismo.
-
-Contenido del README.md
-markdown
-Copiar código
-# Sistema de Información del Sistema Operativo
-
-Este proyecto es una aplicación web en Go que muestra información detallada sobre el sistema operativo en el que se ejecuta. Proporciona datos como el uso de CPU, espacio en disco, memoria RAM y más, todo accesible a través de una interfaz web sencilla.
-
-## Características
-
-- Muestra el sistema operativo y la arquitectura.
-- Número de CPUs disponibles.
-- Información sobre el uso del disco duro.
-- Detalles de la memoria RAM utilizada y disponible.
-- Directorio principal del usuario actual.
-- Variables de entorno esenciales.
+### Navegación Sencilla
+Incluye un enlace en la página principal para acceder a la información del sistema del servidor.
 
 ## Tecnologías Utilizadas
 
-- **Go (Golang)**: Lenguaje de programación utilizado para desarrollar la aplicación backend.
-- **[gopsutil](https://github.com/shirou/gopsutil)**: Biblioteca en Go utilizada para recopilar información del sistema.
-- **HTML**: Utilizado para la estructuración de la página web que muestra la información.
+- **Backend**:
+  - Lenguaje: Go
+  - Paquetes estándar: `net/http`, `os`, `runtime`
 
-## Requisitos
+- **Frontend**:
+  - HTML, CSS y JavaScript
+  - Uso de APIs modernas como `navigator.userAgent`, `navigator.geolocation`, y `Intl.DateTimeFormat`.
 
-Para ejecutar este proyecto necesitas tener instalado Go (Golang). Puedes descargarlo e instalarlo desde [aquí](https://golang.org/dl/).
+## Requisitos Previos
 
-## Instalación y Ejecución
+- Tener instalado **Go** (versión 1.20 o superior recomendada).
+- Un navegador moderno que soporte las APIs utilizadas.
 
-Clona el repositorio en tu máquina local usando:
+## Estructura del Proyecto
 
-
-## Para ejecutar la aplicación, utiliza el siguiente comando en la raíz del proyecto:
-*** go run . ***
-*** La aplicación estará disponible en http://localhost:8080**
