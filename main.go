@@ -9,27 +9,33 @@ import (
     "github.com/shirou/gopsutil/mem"
 )
 
+func mainPage(w http.ResponseWriter, r *http.Request) {
+    // Envía una página HTML con un enlace a la información del sistema
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+    fmt.Fprintf(w, `<html><head><title>Página Inicial</title></head><body>
+        <h1>Bienvenido a la Página de Información del Sistema</h1>
+        <p><a href="/systeminfo">Ver la información de tu sistema aquí</a></p>
+        </body></html>`)
+}
+
 func systemInfo(w http.ResponseWriter, r *http.Request) {
     // Establece el tipo de contenido y la codificación de caracteres
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-    // Comienza a generar la página HTML
+    // Comienza a generar la página HTML con la información del sistema
     fmt.Fprintf(w, "<h1>Información del Sistema Operativo</h1>")
     fmt.Fprintf(w, "<strong>Sistema Operativo:</strong> %s<br>", runtime.GOOS)
     fmt.Fprintf(w, "<strong>Arquitectura:</strong> %s<br>", runtime.GOARCH)
     fmt.Fprintf(w, "<strong>Número de CPUs:</strong> %d<br>", runtime.NumCPU())
 
-    // Información de disco
     d, _ := disk.Usage("/")
     fmt.Fprintf(w, "<strong>Espacio total del disco:</strong> %v GB<br>", d.Total/1024/1024/1024)
     fmt.Fprintf(w, "<strong>Espacio usado del disco:</strong> %v GB (%.2f%%)<br>", d.Used/1024/1024/1024, d.UsedPercent)
 
-    // Información de la memoria RAM
     v, _ := mem.VirtualMemory()
     fmt.Fprintf(w, "<strong>Total memoria RAM:</strong> %v GB<br>", v.Total/1024/1024/1024)
     fmt.Fprintf(w, "<strong>Memoria RAM usada:</strong> %v GB (%.2f%%)<br>", v.Used/1024/1024/1024, v.UsedPercent)
 
-    // Directorio del usuario
     homeDir, err := os.UserHomeDir()
     if err != nil {
         fmt.Fprintf(w, "<strong>Error obteniendo el directorio del usuario:</strong> %s<br>", err)
@@ -39,7 +45,9 @@ func systemInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    http.HandleFunc("/", systemInfo) // Establece el handler para la raíz
+    http.HandleFunc("/", mainPage)        
+    http.HandleFunc("/systeminfo", systemInfo) // Ruta para la información del sistema
+
     port := os.Getenv("PORT")
     if port == "" {
         port = "8080" // Puerto por defecto si no se especifica
