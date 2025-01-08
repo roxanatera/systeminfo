@@ -94,3 +94,5 @@ Información del Sistema del Cliente:
 - Arquitectura: amd64
 - Número de CPUs: 2
 
+![img.ejemploserver](https://github.com/roxanatera/systeminfo/blob/main/systemserver.PNG)
+
