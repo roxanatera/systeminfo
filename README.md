@@ -85,6 +85,9 @@ Información del Sistema del Cliente:
   - WebAssembly: Sí
 - Geolocalización: Latitud: 40.416775, Longitud: -3.703790
 
+![img.ejemplo](https://raw.githubusercontent.com/roxanatera/systeminfo/de6b0caad52a7bfe7b69ecc4a4f08908a433c07d/systeminfo.png)
+
+
 
 ## Información del Sistema del Servidor:
 - Sistema Operativo: linux
